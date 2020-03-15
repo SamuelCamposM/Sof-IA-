@@ -3,12 +3,11 @@
     <v-row>
       <v-col cols="1"></v-col>
       <v-col cols="10">
-        <v-row >
+        <v-row>
           <v-layout :wrap="true">
             <v-flex xs12>
               <v-card>
                 <v-date-picker
-                  
                   color="rgb(43,46,59)"
                   v-model="fecha"
                   full-width
@@ -16,17 +15,17 @@
                   locale="es-cl"
                   :min="minimo"
                   :max="max"
-                  @change="getDolar(fecha)"
+                  @change="filtrarPorFecha(fecha)"
                 ></v-date-picker>
               </v-card>
-              <v-card color="secondary" dark>
-                <v-card-text class="title text-center">{{ fecha }} - {{ valor }}</v-card-text>
+              <v-card color="secondary" dark v-for="filtrado in filtrados" :key="filtrado.id">
+                <v-card-text class="title text-center">{{ fecha }} -{{ valor }} - {{filtrado.nombre}} - {{filtrado.FechaISO}} </v-card-text>
               </v-card>
             </v-flex>
           </v-layout>
         </v-row>
       </v-col>
-        <v-col cols="1"></v-col>
+      <v-col cols="1"></v-col>
     </v-row>
   </v-container>
 </template>
@@ -51,34 +50,41 @@ export default {
       fecha: new Date().toISOString().substr(0, 10),
       minimo: "1984",
       max: new Date().toISOString().substr(0, 10),
-      valor: null
+      valor: null,
+      colecciones: [],
+      filtrados: [],
     };
   },
   methods: {
-    async getDolar(dia) {
-      console.log(dia);
-      let arrayFecha = dia.split(["-"]);
-      console.log(arrayFecha);
-      let ddmmaa = arrayFecha[2] + "-" + arrayFecha[1] + "-" + arrayFecha[0];
-      console.log(ddmmaa);
 
-      try {
-        let datos = await axios.get(
-          `https://mindicador.cl/api/dolar/${ddmmaa}`
-        );
-        if (datos.data.serie.length > 0) {
-          this.valor = await datos.data.serie[0].valor;
-        } else {
-          this.valor = "sin resultados";
+    traerColeccion() {
+      let self = this;
+      fetch("http://localhost:4000/mostrando-casos")
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          self.colecciones = data;
+          self.filtrarPorFecha()
+        });
+    },
+    filtrarPorFecha(fecha) {
+      console.log(fecha);
+this.filtrados = []
+      this.colecciones.forEach(doc => {
+        if (doc.FechaISO == this.fecha) {
+      console.log(doc.FechaISO);
+      this.filtrados.push(doc)
         }
-      } catch (error) {
-        // console.log(err);
-      } finally {
-      }
+      });
+      console.log(this.filtrados);
+      
     }
   },
+
   created() {
-    this.getDolar(this.fecha);
+
+    this.traerColeccion();
   }
 };
 </script>
