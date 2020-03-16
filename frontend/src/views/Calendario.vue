@@ -47,7 +47,7 @@ export default {
         "space-between"
       ],
       justify: "center",
-      fecha: new Date().toISOString().substr(0, 10),
+      fecha: null,
       minimo: "1984",
       max: new Date().toISOString().substr(0, 10),
       valor: null,

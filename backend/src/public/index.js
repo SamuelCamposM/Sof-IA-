@@ -2,7 +2,7 @@
 //SOCKET.IO
 const socket = io();
 // the link to your model provided by Teachable Machine export panel
-const URL = "https://teachablemachine.withgoogle.com/models/VIGyl-bO/";
+const URL = "https://teachablemachine.withgoogle.com/models/SZKYnKYw/";
 let model, webcam, ctx, labelContainer, maxPredictions;
 
 async function init() {
